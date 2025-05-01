@@ -1,4 +1,4 @@
-# os2iot-gatewayoverview
+# OS2IoT Gateway overview
 LoRaWAN-gateways in OS2IOT presented with relevant data and external links 
 
 ![screenshot of example output](screenshot.png)
