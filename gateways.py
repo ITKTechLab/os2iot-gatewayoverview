@@ -65,6 +65,9 @@ today_str = datetime.today().strftime("%Y-%m-%d")
 
 gateway_df['lastSeenAt'] = pd.to_datetime(gateway_df['lastSeenAt'])
 gateway_df['lastSeenAt'] = gateway_df['lastSeenAt'].dt.date
+gateway_df['lastSeenAt'] = gateway_df['lastSeenAt'].apply(
+    lambda date: f"<span style='color:green'>{date}</span>" if str(date) == today_str else f"<span style='color:red'>{date}</span>"
+)
 
 gateway_df['placement'] = gateway_df['placement'].apply(
     lambda p: f"{p} &#x1F3E2;" if p == "INDOORS" else f"{p} &#127780;&#65039;"
