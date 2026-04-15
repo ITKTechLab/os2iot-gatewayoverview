@@ -16,6 +16,7 @@ os2iot_api = os.getenv('os2iot_api')
 org_id = os.getenv('os2iot_org_id')
 kerlink_password = os.getenv('kerlink_password')
 directory = os.getenv('directory')
+wmc_base_url = os.getenv('wmc_base_url')
 
 directory = directory if os.path.isdir(directory) else os.getcwd()
 url = f"{base_url}/chirpstack/gateway?organizationId={org_id}&limit=100000&offset=0"
@@ -65,9 +66,14 @@ today_str = datetime.today().strftime("%Y-%m-%d")
 
 gateway_df['lastSeenAt'] = pd.to_datetime(gateway_df['lastSeenAt'])
 gateway_df['lastSeenAt'] = gateway_df['lastSeenAt'].dt.date
+
+gateways_online = (gateway_df['lastSeenAt'] == pd.to_datetime(today_str).date()).sum()
+
 gateway_df['lastSeenAt'] = gateway_df['lastSeenAt'].apply(
     lambda date: f"<span style='color:green'>{date}</span>" if str(date) == today_str else f"<span style='color:red'>{date}</span>"
 )
+
+today_str = f"{today_str} - {gateways_online} gateways are currently online"
 
 gateway_df['placement'] = gateway_df['placement'].apply(
     lambda p: f"{p} &#x1F3E2;" if p == "INDOORS" else f"{p} &#127780;&#65039;"
