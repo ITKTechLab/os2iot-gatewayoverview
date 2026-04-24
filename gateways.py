@@ -6,6 +6,7 @@ import re
 from datetime import datetime
 import pandas as pd
 from dotenv import load_dotenv
+import utm
 load_dotenv(override=True)
 
 # %%
@@ -51,8 +52,8 @@ gateway_df = pd.DataFrame(data.get('resultList', []))[['gatewayId',
                                                        #'modelName',
                                                        #'antennaType',
                                                        'placement',
-                                                       #'latitude',
-                                                       #'longitude',
+                                                       'latitude',
+                                                       'longitude',
                                                        'MAC',
                                                        'IP',
                                                        'SNMP',
@@ -74,6 +75,11 @@ gateway_df['lastSeenAt'] = gateway_df['lastSeenAt'].apply(
 )
 
 today_str = f"{today_str} - {gateways_online} gateways are currently online"
+
+gateway_df['map'] = gateway_df.apply(
+    lambda item: '🧭️' if pd.isna(item['latitude']) or item['latitude'] == 0 else f'<a href="https://skraafoto.dataforsyningen.dk/?center={utm.from_latlon(item["latitude"], item["longitude"])[0]:.2f}%2C{utm.from_latlon(item["latitude"], item["longitude"])[1]:.2f}" title="{item["latitude"]}, {item["longitude"]}" target="_blank">🗺</a>', axis=1
+)
+gateway_df.drop(columns=['latitude', 'longitude'], inplace=True)
 
 gateway_df['placement'] = gateway_df['placement'].apply(
     lambda p: f"{p} &#x1F3E2;" if p == "INDOORS" else f"{p} &#127780;&#65039;"
