@@ -58,6 +58,8 @@ gateway_df = pd.DataFrame(data.get('resultList', []))[['gatewayId',
                                                        'IP',
                                                        'SNMP',
                                                        'lastSeenAt',
+                                                       'gatewayResponsibleEmail',
+                                                       'operationalResponsibleEmail',
                                                        'status']]
 
 gateway_df = gateway_df.rename(columns={'gatewayId': 'gatewayEUI',
@@ -68,7 +70,7 @@ today_str = datetime.today().strftime("%Y-%m-%d")
 gateway_df['lastSeenAt'] = pd.to_datetime(gateway_df['lastSeenAt'])
 gateway_df['lastSeenAt'] = gateway_df['lastSeenAt'].dt.date
 
-gateways_online = (gateway_df['lastSeenAt'] == pd.to_datetime(today_str).date()).sum()
+gateways_online = (gateway_df['lastSeenAt'] == today_str).sum()
 
 gateway_df['lastSeenAt'] = gateway_df['lastSeenAt'].apply(
     lambda date: f"<span style='color:green'>{date}</span>" if str(date) == today_str else f"<span style='color:red'>{date}</span>"
@@ -117,6 +119,24 @@ gateway_df['Phone'] = gateway_df['Phone'].apply(
         else "&#x1F4F5;"
     )
 )
+
+if 'gatewayResponsibleEmail' in gateway_df.columns and 'operationalResponsibleEmail' in gateway_df.columns:
+    gateway_df['email'] = gateway_df.apply(
+        lambda row: (
+            # build recipient list first
+            (lambda recipients: f"<a href=\"mailto:{recipients}\">{recipients.split('@')[0]}</a>" if recipients else "")(
+                
+                (',').join([e for e in [
+                    row.get('gatewayResponsibleEmail') if pd.notna(row.get('gatewayResponsibleEmail')) else None,
+                    row.get('operationalResponsibleEmail') if pd.notna(row.get('operationalResponsibleEmail')) else None
+                ] if e])
+            )
+        ),
+        axis=1
+    )
+    gateway_df.drop(columns=['gatewayResponsibleEmail', 'operationalResponsibleEmail'], inplace=True, errors='ignore')
+
+
 
 # %%
 html_string = '''
