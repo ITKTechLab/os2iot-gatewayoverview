@@ -65,6 +65,9 @@ gateway_df = pd.DataFrame(data.get('resultList', []))[['gatewayId',
 gateway_df = gateway_df.rename(columns={'gatewayId': 'gatewayEUI',
                                         'name': 'gateway_name'})
 
+gateway_df['MAC'] = gateway_df['MAC'].astype(str).str.upper()
+gateway_df['MAC'] = gateway_df['MAC'].str.replace(":", "", regex=False)
+
 today_str = datetime.today().strftime("%Y-%m-%d")
 
 gateway_df['lastSeenAt'] = pd.to_datetime(gateway_df['lastSeenAt'])
