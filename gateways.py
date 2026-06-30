@@ -68,6 +68,8 @@ gateway_df = gateway_df.rename(columns={'gatewayId': 'gatewayEUI',
 gateway_df['MAC'] = gateway_df['MAC'].astype(str).str.upper()
 gateway_df['MAC'] = gateway_df['MAC'].str.replace(":", "", regex=False)
 
+gateway_df['gatewayEUI'] = gateway_df['gatewayEUI'].astype(str).str.upper()
+
 today = datetime.today().date()
 today_str = today.strftime("%Y-%m-%d")
 
