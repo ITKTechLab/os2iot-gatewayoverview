@@ -68,18 +68,19 @@ gateway_df = gateway_df.rename(columns={'gatewayId': 'gatewayEUI',
 gateway_df['MAC'] = gateway_df['MAC'].astype(str).str.upper()
 gateway_df['MAC'] = gateway_df['MAC'].str.replace(":", "", regex=False)
 
-today_str = datetime.today().strftime("%Y-%m-%d")
+today = datetime.today().date()
+today_str = today.strftime("%Y-%m-%d")
 
 gateway_df['lastSeenAt'] = pd.to_datetime(gateway_df['lastSeenAt'])
 gateway_df['lastSeenAt'] = gateway_df['lastSeenAt'].dt.date
 
-gateways_online = (gateway_df['lastSeenAt'] == today_str).sum()
+gateways_online = (gateway_df['lastSeenAt'] == today).sum()
 
 gateway_df['lastSeenAt'] = gateway_df['lastSeenAt'].apply(
-    lambda date: f"<span style='color:green'>{date}</span>" if str(date) == today_str else f"<span style='color:red'>{date}</span>"
+    lambda date: f"<span style='color:green'>{date}</span>" if date == today else f"<span style='color:red'>{date}</span>"
 )
 
-today_str = f"{today_str} - {gateways_online} gateways are currently online"
+today_str = f"{today_str}: {gateways_online} gateways are currently online"
 
 gateway_df['map'] = gateway_df.apply(
     lambda item: '🧭️' if pd.isna(item['latitude']) or item['latitude'] == 0 else f'<a href="https://skraafoto.dataforsyningen.dk/?center={utm.from_latlon(item["latitude"], item["longitude"])[0]:.2f}%2C{utm.from_latlon(item["latitude"], item["longitude"])[1]:.2f}" title="{item["latitude"]}, {item["longitude"]}" target="_blank">🗺</a>', axis=1
