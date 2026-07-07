@@ -130,7 +130,7 @@ if 'gatewayResponsibleEmail' in gateway_df.columns and 'operationalResponsibleEm
     gateway_df['email'] = gateway_df.apply(
         lambda row: (
             # build recipient list first
-            (lambda recipients: f"<a href=\"mailto:{recipients}\">{recipients.split('@')[0]}</a>" if recipients else "")(
+            (lambda recipients: f"<a href=\"mailto:{recipients}?subject=LoRaWAN-gateway%20{gateway_df['gateway_name'].iloc[gateway_df.index.get_loc(row.name)]}\">{recipients.split('@')[0]}</a>" if recipients else "")(
                 
                 (',').join([e for e in [
                     row.get('gatewayResponsibleEmail') if pd.notna(row.get('gatewayResponsibleEmail')) else None,
