@@ -47,7 +47,7 @@ gateway_df = pd.DataFrame(data.get('resultList', []))[['gatewayId',
                                                        'name',
                                                        'Phone',
                                                        #'operationalResponsibleName',
-                                                       #'rxPacketsReceived',
+                                                       'rxPacketsReceived',
                                                        #'txPacketsEmitted',
                                                        #'modelName',
                                                        #'antennaType',
@@ -63,6 +63,7 @@ gateway_df = pd.DataFrame(data.get('resultList', []))[['gatewayId',
                                                        'status']]
 
 gateway_df = gateway_df.rename(columns={'gatewayId': 'gatewayEUI',
+                                        'rxPacketsReceived': 'rx',
                                         'name': 'gateway_name'})
 
 gateway_df['MAC'] = gateway_df['MAC'].astype(str).str.upper()
@@ -189,5 +190,3 @@ else:
 
 # %%
 gateway_df
-
-
