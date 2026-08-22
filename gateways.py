@@ -28,7 +28,16 @@ headers = {
 
 response = requests.get(url, headers=headers)
 
-data = json.loads(response.text)
+if not response.ok:
+    raise SystemExit(f"Request failed: {response.status_code} {response.reason}")
+
+try:
+    data = json.loads(response.text)
+except json.JSONDecodeError:
+    raise SystemExit("Request returned invalid JSON.")
+
+if not data or not data.get('resultList'):
+    raise SystemExit("Request returned no gateway data.")
 
 # %%
 for item in data['resultList']:
